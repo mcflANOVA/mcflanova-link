@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>mcflANOVA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Jersey+25&family=Michroma&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --soft-periwinkle: #A682FF;
+      --medium-slate:    #715AFF;
+      --cornflower:      #5887FF;
+      --maya-blue:       #55C1FF;
+      --deep-space:      #102E4A;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 20% 20%, #1a1240, #080e1a 60%);
+      font-family: 'Michroma', sans-serif;
+      color: #ffffff;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .glitter {
+      position: fixed;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: white;
+      pointer-events: none;
+      animation: sparkle linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes sparkle {
+      0% { transform: translateY(0) scale(0); opacity: 0; }
+      10% { opacity: 1; }
+      50% { transform: translateY(-40px) scale(1); }
+      100% { transform: translateY(-80px) scale(0); opacity: 0; }
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 64px 24px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .avatar-ring {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      padding: 3px;
+      background: conic-gradient(var(--soft-periwinkle), var(--maya-blue), var(--medium-slate), var(--cornflower));
+      box-shadow: 0 0 40px rgba(166,130,255,0.6), 0 0 80px rgba(85,193,255,0.5);
+    }
+
+    .avatar-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .avatar-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .name-prefix, .name-suffix {
+      font-family: 'Jersey 25', sans-serif;
+      font-size: 26px;
+      letter-spacing: 4px;
+    }
+
+    .handle {
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: #ffffff;
+      margin-top: 8px;
+      opacity: 1;
+    }
+
+    .links {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 40px;
+    }
+
+    .link-btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-radius: 16px;
+      text-decoration: none;
+      background: rgba(20,30,60,0.6);
+      border: 1px solid rgba(88,135,255,0.2);
+      backdrop-filter: blur(12px);
+      transition: 0.3s;
+      color: white;
+    }
+
+    .link-btn:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 0 20px rgba(85,193,255,0.4);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="container">
+
+  <div class="avatar-ring">
+    <div class="avatar-inner">
+      <img src="Isefac_com_groupe20075.jpg" alt="mcflanova" />
+    </div>
+  </div>
+
+  <div>
+    <span class="name-prefix">mcfl</span><span class="name-suffix">ANOVA</span>
+  </div>
+
+  <p class="handle">✦ REJOINS MOI ! ✦</p>
+
+  <div class="links">
+
+    <a href="https://www.twitch.tv/mcflanova" target="_blank" class="link-btn">
+      <span>TWITCH</span>
+      <span>→</span>
+    </a>
+
+    <a href="https://www.instagram.com/mcflanova/" target="_blank" class="link-btn">
+      <span>INSTAGRAM</span>
+      <span>→</span>
+    </a>
+
+    <a href="https://www.tiktok.com/@mcflanova?_r=1&_t=ZN-95aULHTDjOA" target="_blank" class="link-btn">
+      <span>TIKTOK</span>
+      <span>→</span>
+    </a>
+
+  </div>
+
+</div>
+
+<script>
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+let stars = [];
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createStar() {
+  return {
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    size: Math.random() * 2,
+    speed: Math.random() * 0.5
+  };
+}
+
+function init() {
+  stars = [];
+  for (let i = 0; i < 150; i++) stars.push(createStar());
+}
+
+function draw() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = 'white';
+  stars.forEach(s => {
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+    ctx.fill();
+    s.y -= s.speed;
+    if (s.y < 0) s.y = canvas.height;
+  });
+  requestAnimationFrame(draw);
+}
+
+resize();
+init();
+draw();
+window.addEventListener('resize', () => { resize(); init(); });
+
+// glitter particles
+setInterval(() => {
+  const g = document.createElement('div');
+  g.className = 'glitter';
+  g.style.left = Math.random()*100 + 'vw';
+  g.style.top = Math.random()*100 + 'vh';
+  g.style.background = ['#A682FF','#55C1FF','#fff'][Math.floor(Math.random()*3)];
+  g.style.animationDuration = (Math.random()*3+2)+'s';
+  document.body.appendChild(g);
+  setTimeout(()=>g.remove(),5000);
+}, 120);
+</script>
+
+</body>
+</html>
